@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-anchor_counter = "EzWenRxjEN3YYz621hDhTE5p7bqHFd5Fxrat5XRW7Nim"
+solanamultisig = "BBwnqf3jRbgPHFBuLWZzQe1UMWfG9BQSmL2TaDkwPgmv"
 
 [registry]
 url = "https://api.apr.dev"

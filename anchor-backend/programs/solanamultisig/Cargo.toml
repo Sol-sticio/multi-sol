@@ -1,12 +1,12 @@
 [package]
-name = "anchor-counter"
+name = "solanamultisig"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "anchor_counter"
+name = "solanamultisig"
 
 [features]
 no-entrypoint = []
@@ -16,5 +16,5 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
+borsh = "0.8.2" # Check for the latest version on crates.io
 anchor-lang = "0.26.0"
-solana-program = "=1.17.17"
