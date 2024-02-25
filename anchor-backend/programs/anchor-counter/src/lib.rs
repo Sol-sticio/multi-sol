@@ -1,44 +1,63 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::sysvar;
 
-declare_id!("EzWenRxjEN3YYz621hDhTE5p7bqHFd5Fxrat5XRW7Nim");
+declare_id!("2JWAz7kje7b1m1cRB9Kym7hm2A5qZ921JW3c86Hb9DQN");
 
 #[program]
-pub mod anchor_counter {
+pub mod solsticio_space {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        let counter = &mut ctx.accounts.counter;
-        counter.count = 0;
-        msg!("Counter account created. Current count: {}", counter.count);
+        let base_account = &mut ctx.accounts.base_account;
+        base_account.total_claims = 0;
         Ok(())
     }
 
-    pub fn increment(ctx: Context<Update>) -> Result<()> {
-        let counter = &mut ctx.accounts.counter;
-        msg!("Previous counter: {}", counter.count);
-        counter.count = counter.count.checked_add(1).unwrap();
-        msg!("Counter incremented. Current count: {}", counter.count);
+    pub fn request_claim(ctx: Context<RequestClaim>, uri: String, coords: [u8; 2]) -> Result<()> {
+        let base_account = &mut ctx.accounts.base_account;
+        let random_number = get_random_number();
+
+        if random_number % 2 == 0 {
+            base_account.claims.push(Claim { uri, coords, result: true });
+            msg!("Claim successful.");
+        } else {
+            msg!("Claim failed.");
+        }
+
+        base_account.total_claims += 1;
         Ok(())
     }
 }
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = user, space = 8 + 8)]
-    pub counter: Account<'info, Counter>,
+    #[account(init, payer = user, space = 9000)]
+    pub base_account: Account<'info, BaseAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-pub struct Update<'info> {
+pub struct RequestClaim<'info> {
     #[account(mut)]
-    pub counter: Account<'info, Counter>,
-    pub user: Signer<'info>,
+    pub base_account: Account<'info, BaseAccount>,
 }
 
 #[account]
-pub struct Counter {
-    pub count: u64,
+pub struct BaseAccount {
+    pub total_claims: u32,
+    pub claims: Vec<Claim>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
+pub struct Claim {
+    pub uri: String,
+    pub coords: [u8; 2],
+    pub result: bool,
+}
+
+fn get_random_number() -> u64 {
+    let clock = sysvar::clock::Clock::get().unwrap();
+    clock.unix_timestamp as u64
 }

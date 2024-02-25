@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-anchor_counter = "EzWenRxjEN3YYz621hDhTE5p7bqHFd5Fxrat5XRW7Nim"
+anchor_counter = "2JWAz7kje7b1m1cRB9Kym7hm2A5qZ921JW3c86Hb9DQN"
 
 [registry]
 url = "https://api.apr.dev"
