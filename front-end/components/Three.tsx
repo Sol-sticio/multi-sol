@@ -11,9 +11,10 @@ import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader";
 import idl from './idl/solsticio_space.json'; // Path to your IDL file
 import hydroIdenticon from './snowflakes.js';
 
-const programID = new web3.PublicKey('AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K');
+const programID = new web3.PublicKey('12NEHqQRyQ1nGcm12jbiFkbGLKFtWiZwAY6fhQ6dAiH7');
 const baseAccount = web3.Keypair.generate();
 import styles from '../styles/Three.module.css'; // Assuming you have some basic styles
+import { PublicKey } from '@solana/web3.js';
 export default function ThreePage() {
   const mountRef = useRef(null);
   const walletRef = useRef(null);
@@ -22,6 +23,11 @@ export default function ThreePage() {
   const { connection } = useConnection(); // From @solana/wallet-adapter-react
   const { publicKey, signTransaction } = useWallet(); // Also from @solana/wallet-adapter-react
 
+
+  
+
+
+  
   useEffect(() => {
     walletRef.current = wallet;
   },[wallet])
@@ -41,8 +47,13 @@ export default function ThreePage() {
       provider = new anchor.AnchorProvider(connection, walletRef.current, {})
       anchor.setProvider(provider)
     }
-    const program = new anchor.Program(idl as anchor.Idl, 'AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K')
-    console.log(program)
+    const program = new anchor.Program(idl as anchor.Idl, '12NEHqQRyQ1nGcm12jbiFkbGLKFtWiZwAY6fhQ6dAiH7')
+
+
+    const baseAccount = new PublicKey('2PG47EriWNQE1tM3wbf8XcFiSy1QvVCnCkr82mXiGWpc');
+
+    console.log("#####",baseAccount)
+    // console.log(program)
 
     const coordsUint8 = new Uint8Array(new Uint16Array(coords).buffer);
     try {
@@ -50,7 +61,7 @@ export default function ThreePage() {
       // and `program` is your initialized Anchor program object
       const tx = await program.methods.requestClaim(uri, coordsUint8)
         .accounts({
-          baseAccount: baseAccount.publicKey,
+          baseAccount: baseAccount,
           user: walletRef.current?.publicKey,
           systemProgram: web3.SystemProgram.programId,
         })
@@ -61,6 +72,7 @@ export default function ThreePage() {
       console.error("Error making request_claim call", error);
     }
   };
+
 
   useEffect(() => {
     const scene = new THREE.Scene();
@@ -143,7 +155,7 @@ export default function ThreePage() {
             const uri = walletRef.current.publicKey.toString();
             // Assuming the camera's x and z positions are what you want to use as coordinates
             // and converting them to a format that matches your smart contract's expectations
-            const coords = [Math.floor(camera.position.x), Math.floor(camera.position.z)];
+            const coords = [Math.floor(camera.position.x), Math.floor(camera.position.z)] as [number, number];
             requestClaim(uri, coords);
           } else {
             console.log("Wallet not connected");
@@ -166,6 +178,8 @@ export default function ThreePage() {
     };
   }, []);
   const [walletIconSVG, setWalletIconSVG] = useState<string | null>(null);
+
+  
 
   useEffect(() => {
     if (wallet.connected && wallet.publicKey) {
