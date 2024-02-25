@@ -19,26 +19,28 @@ export default function ThreePage() {
   const wallet = useWallet();
   const { connection } = useConnection(); // From @solana/wallet-adapter-react
   const { publicKey, signTransaction } = useWallet(); // Also from @solana/wallet-adapter-react
-  let provider: anchor.Provider
 
-  try {
-    provider = anchor.getProvider()
-  } catch {
-    provider = new anchor.AnchorProvider(connection, wallet, {})
-    anchor.setProvider(provider)
-  }
-  const program = new anchor.Program(idl as anchor.Idl, 'AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K')
-  console.log(program)
   useEffect(() => {
     walletRef.current = wallet;
   },[wallet])
   const requestClaim = async (uri: string, coords: [number, number]) => {
+
     console.log(walletRef)
     if (!walletRef.current?.connected || !walletRef.current?.publicKey) {
       console.log("Wallet not connected");
       alert("Wallet not connected")
       return;
     }
+    let provider: anchor.Provider
+
+    try {
+      provider = anchor.getProvider()
+    } catch {
+      provider = new anchor.AnchorProvider(connection, walletRef.current, {})
+      anchor.setProvider(provider)
+    }
+    const program = new anchor.Program(idl as anchor.Idl, 'AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K')
+    console.log(program)
 
     const coordsUint8 = new Uint8Array(new Uint16Array(coords).buffer);
     try {
