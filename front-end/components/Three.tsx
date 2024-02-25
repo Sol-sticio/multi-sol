@@ -171,7 +171,7 @@ export default function ThreePage() {
     if (wallet.connected && wallet.publicKey) {
       // Use the wallet's public key as the seed for the snowflake icon
       const icon = hydroIdenticon.create({
-        seed: wallet.publicKey, // Replace 'randstring' with your desired seed
+        seed: wallet.publicKey.toString(), // Replace 'randstring' with your desired seed
         size: 64, // Size of the icon
       });
       console.log(icon);
