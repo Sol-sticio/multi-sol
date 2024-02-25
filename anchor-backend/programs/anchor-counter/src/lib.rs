@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::sysvar;
 
-declare_id!("69VADpHZeFAXTtaoEka57BAWRfQPZqZECb7eqk4NnM6t");
+declare_id!("7rx8ws5KniPWtqQGVc6Yk2LGqXMMbHvYTQsr1DPuJKQX");
 
 #[program]
 pub mod solsticio_space {
