@@ -7,7 +7,7 @@ import {web3} from "@project-serum/anchor"
 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-import idl from '../../anchor-backend/target/idl/solsticio_space.json'; // Path to your IDL file
+import idl from './idl/solsticio_space.json'; // Path to your IDL file
 
 const programID = new web3.PublicKey('AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K');
 const baseAccount = web3.Keypair.generate();
