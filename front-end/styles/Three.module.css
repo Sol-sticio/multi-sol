@@ -74,3 +74,11 @@
   right: 20px;
   z-index: 10;
 }
+.walletIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10; /* Ensure it's above the canvas */
+  width: 150px; /* Adjust size as needed */
+  height: auto; /* Maintain aspect ratio */
+}

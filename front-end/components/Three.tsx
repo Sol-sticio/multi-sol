@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef,useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { useWallet,useConnection,useAnchorWallet } from '@solana/wallet-adapter-react';
@@ -6,8 +6,10 @@ import * as anchor from "@project-serum/anchor";
 import {web3} from "@project-serum/anchor"
 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader";
 
 import idl from './idl/solsticio_space.json'; // Path to your IDL file
+import hydroIdenticon from './snowflakes.js';
 
 const programID = new web3.PublicKey('AwhD34oocpcqp2ySXY7hJ9cqaQDjjbaNkfHU8gBA7M1K');
 const baseAccount = web3.Keypair.generate();
@@ -75,22 +77,50 @@ export default function ThreePage() {
     if (mountRef.current) {
       mountRef.current.appendChild(renderer.domElement);
     }
+    // Generate the icon as a canvas element
+    const icon = hydroIdenticon.create({
+      seed: 'SolsticioSpace', // Replace 'randstring' with your desired seed
+      size: 64, // Size of the icon
+    });
+    console.log(icon);
+    // Convert SVG string to Data URL
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(icon);
+    const svgBase64 = btoa(svgString);
+    console.log(svgBase64)
+    const base64DataUrl = `data:image/svg+xml;base64,${svgBase64}`;
 
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Create an image and load the SVG
+    const image = new Image();
+    image.onload = () => {
+      // Once the image is loaded, create the texture
+      const texture = new THREE.Texture(image);
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.LinearFilter; // Use LinearFilter to avoid needing mipmaps
+
+      // Use the texture in a material
+      const material = new THREE.MeshBasicMaterial({ map: texture });
+
+      // Create your mesh with the material
+      const geometry = new THREE.BoxGeometry();
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+      const animate = () => {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      };
+
+      animate();
+    };
+    console.log(base64DataUrl)
+    image.src = base64DataUrl;
+
 
     camera.position.z = 5;
 
-    const animate = () => {
-      requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    };
 
-    animate();
 
     // Function to handle camera movement
     const moveCamera = (event) => {
@@ -135,10 +165,34 @@ export default function ThreePage() {
       }
     };
   }, []);
+  const [walletIconSVG, setWalletIconSVG] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (wallet.connected && wallet.publicKey) {
+      // Use the wallet's public key as the seed for the snowflake icon
+      const icon = hydroIdenticon.create({
+        seed: wallet.publicKey, // Replace 'randstring' with your desired seed
+        size: 64, // Size of the icon
+      });
+      console.log(icon);
+      // Convert SVG string to Data URL
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(icon);
+      const svgBase64 = btoa(svgString);
+      console.log(svgBase64)
+      const base64DataUrl = `data:image/svg+xml;base64,${svgBase64}`;
+      setWalletIconSVG(base64DataUrl);
+    } else {
+      setWalletIconSVG(null); // Reset the icon when the wallet is disconnected
+    }
+  }, [wallet.connected, wallet.publicKey]);
 
   return (
     <div className={styles.container}>
       <div ref={mountRef} className={styles.threeCanvas}></div>
+      {walletIconSVG && (
+        <img className={styles.walletIcon} src={walletIconSVG}/>
+      )}
       <div className={styles.walletButton}>
         <WalletMultiButton />
       </div>
