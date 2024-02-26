@@ -1,9 +1,11 @@
-import { useEffect, useRef,useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { useWallet,useConnection,useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 import * as anchor from "@project-serum/anchor";
-import {web3} from "@project-serum/anchor"
+import { web3 } from "@project-serum/anchor"
+import Icons from './Icons';
+import Instructions from './Instructions';
 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader";
@@ -24,7 +26,7 @@ export default function ThreePage() {
 
   useEffect(() => {
     walletRef.current = wallet;
-  },[wallet])
+  }, [wallet])
   const requestClaim = async (uri: string, coords: [number, number]) => {
 
     console.log(walletRef)
@@ -55,7 +57,7 @@ export default function ThreePage() {
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc();
-    
+
       console.log("Transaction signature", tx);
     } catch (error) {
       console.error("Error making request_claim call", error);
@@ -165,6 +167,7 @@ export default function ThreePage() {
       }
     };
   }, []);
+  const [showInstructions, setShowInstructions] = useState(true);
   const [walletIconSVG, setWalletIconSVG] = useState<string | null>(null);
 
   useEffect(() => {
@@ -186,16 +189,27 @@ export default function ThreePage() {
       setWalletIconSVG(null); // Reset the icon when the wallet is disconnected
     }
   }, [wallet.connected, wallet.publicKey]);
+  const startGame = () => {
+    setShowInstructions(false);
+  };
 
   return (
     <div className={styles.container}>
-      <div ref={mountRef} className={styles.threeCanvas}></div>
-      {walletIconSVG && (
-        <img className={styles.walletIcon} src={walletIconSVG}/>
+      {showInstructions && (
+       <Instructions startGame={startGame} />
       )}
-      <div className={styles.walletButton}>
-        <WalletMultiButton />
+      <div style={{ display: showInstructions ? 'none' : 'block' }}>
+        <div ref={mountRef} className={styles.threeCanvas}></div>
+        <div ref={mountRef} className={styles.threeCanvas}></div>
+        {walletIconSVG && (
+          <img className={styles.walletIcon} src={walletIconSVG} />
+        )}
+        <div className={styles.walletButton}>
+          <WalletMultiButton />
+        </div>
+        <Icons />
       </div>
     </div>
   );
+  
 }

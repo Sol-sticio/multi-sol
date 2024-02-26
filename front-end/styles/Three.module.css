@@ -78,7 +78,63 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 10; /* Ensure it's above the canvas */
-  width: 150px; /* Adjust size as needed */
-  height: auto; /* Maintain aspect ratio */
+  z-index: 10; 
+  width: 150px; 
+  height: auto;
+}
+.githubImage {
+  position: fixed; 
+  bottom: 20px; 
+  left: 20px; 
+  width: 60px; /* Ancho de la imagen */
+  height: 60px; /* Altura de la imagen */
+  border-radius: 50%; /* Hace que la imagen sea redonda */
+  padding: 5px; /* Ajusta el padding según tu diseño */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  color: #fff; /* Color del texto */
+  text-decoration: none; /* Quita el subrayado del texto */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  transition: background-color 0.3s ease; /* Efecto de transición al pasar el mouse */
+}
+
+.githubImage:hover {
+  background-color: #C3BAF4; 
+}
+
+.instructions {
+  margin: auto;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  margin:  auto;
+  text-align: center;
+  justify-content: center;
+}
+
+.instructions h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.instructions p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.instructions button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #1C2546;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.instructions button:hover {
+  background-color: #043b77;
 }
